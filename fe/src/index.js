@@ -1,6 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
+import './css/bootstrap.min.css'; // Import Bootstrap CSS
+import './css/all.min.css'; // Import Font Awesome CSS
+import './css/slick.css'; // Import Slick CSS
+import './css/simple-line-icons.css'; // Import Simple Line Icons CSS
+import './css/style.css'; 
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
