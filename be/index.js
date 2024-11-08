@@ -6,7 +6,7 @@ require('dotenv').config();
 
 const app = express();
 
-// Middleware
+// Middleware -- Nguyễn Minh Huy
 app.use(cors());
 app.use(express.json());
 app.use(helmet());  // Thêm middleware helmet
