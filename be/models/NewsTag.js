@@ -5,4 +5,4 @@ const newsTagSchema = new mongoose.Schema({
   News_ID_FK: { type: String, required: true }
 });
 
-module.exports = mongoose.model('NewsTag', newsTagSchema);
+module.exports = mongoose.model('NewsTag', newsTagSchema); 

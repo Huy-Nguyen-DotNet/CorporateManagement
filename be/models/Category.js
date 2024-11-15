@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
-const { v4: uuidv4 } = require('uuid');
 
 const categorySchema = new mongoose.Schema({
-  CatID: { type: String, default: uuidv4, unique: true },
   Name: { type: String, maxlength: 250 },
   Url: { type: String, maxlength: 100 },
   Summary: { type: String, maxlength: 250 },

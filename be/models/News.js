@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
-const { v4: uuidv4 } = require('uuid');
 
 const newsSchema = new mongoose.Schema({
-  NewsID: { type: String, default: uuidv4, unique: true },
   Title: { type: String, maxlength: 250 },
   Url: { type: String, maxlength: 50 },
   Summary: { type: String, maxlength: 500 },
