@@ -5,7 +5,7 @@ const commentSchema = new mongoose.Schema({
   Account_ID_FK: { type: String, required: true },
   Content: { type: String, required: true },
   CreatedDate: { type: Date },
-  Status: { type: Number, required: true }
+  Status: { type: Boolean, required: true }
 });
 
 module.exports = mongoose.model('Comment', commentSchema);
