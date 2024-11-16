@@ -1,0 +1,25 @@
+.nav-item {
+  text-align: left;
+}
+
+/* Đặt màu nền cho trạng thái active */
+.side-nav-menu .nav-item.active > a {
+  background: linear-gradient(to left, #ffdca2 0%, #ffbd71 100%);
+  color: white; /* Đặt màu chữ khi mục được chọn là màu trắng */
+  transition: background 0.3s ease; /* Thêm hiệu ứng chuyển đổi mượt mà */
+}
+
+/* Đặt màu nền khi hover */
+.side-nav-menu .nav-item:hover > a {
+  background: linear-gradient(to left, #ffbd71 0%, #ffdca2 100%);
+  color: white; /* Đảm bảo màu chữ khi hover */
+  transition: background 0.3s ease; /* Thêm hiệu ứng chuyển đổi */
+  cursor: pointer; /* Đổi con trỏ thành hình bàn tay */
+}
+
+/* Mặc định (khi không active hoặc hover) */
+.side-nav-menu .nav-item > a {
+  background: transparent;
+  color: #333; /* Màu chữ mặc định */
+  transition: background 0.3s ease;
+}
