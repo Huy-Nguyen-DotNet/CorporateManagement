@@ -1,0 +1,10 @@
+.dropdown-menu.multi-column {
+  max-height: 300px; /* Giới hạn chiều cao tối đa */
+  overflow-y: auto; /* Thêm cuộn dọc nếu vượt quá */
+  column-count: 4; /* Chia thành 2 cột */
+  column-gap: 20px; /* Khoảng cách giữa các cột */
+}
+
+.dropdown-menu.multi-column li {
+  width: 50%; /* Chia các mục theo chiều ngang */
+}
