@@ -14261,7 +14261,7 @@ iframe {
     }
 }
 .page-container .main-content {
-    padding: calc(70px + 25px) 25px 25px;
+    padding: 25px 25px 25px;
     min-height: calc(100vh - 70px);
 }
 .page-container .main-content.full-container {

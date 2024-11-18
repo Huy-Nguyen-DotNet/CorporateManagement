@@ -28,7 +28,9 @@ const AdminHeader = () => {
     <div className="header">
       {/* Logo */}
       <div className="logo">
-        <img src={logo} alt="Logo" />
+        <a>
+          <img src={logo} alt="Logo" />
+        </a>
       </div>
 
       {/* Navigation */}
@@ -81,12 +83,15 @@ const AdminHeader = () => {
               >
                 <div className="d-flex align-items-center justify-content-between">
                   <div>
-                    <i class="icon-user font-size-16" aria-hidden="true"></i>
+                    <i
+                      class="icon-settings font-size-16"
+                      aria-hidden="true"
+                    ></i>
                     <span className="m-l-10 font-weight-bold">
                       Chỉnh Sửa Thông Tin
                     </span>
                   </div>
-                  <i className="icon-arrow-right font-size-10 "></i>
+                  <i className="icon-action-redo font-size-10 "></i>
                 </div>
               </a>
               <a
@@ -100,7 +105,7 @@ const AdminHeader = () => {
                       Đổi Mật Khẩu
                     </span>
                   </div>
-                  <i className="icon-arrow-right font-size-10"></i>
+                  <i className="icon-action-redo font-size-10"></i>
                 </div>
               </a>
               <a
@@ -113,7 +118,7 @@ const AdminHeader = () => {
                     <i class="icon-logout font-size-16" aria-hidden="true"></i>
                     <span className="m-l-10 font-weight-bold">Đăng Xuất</span>
                   </div>
-                  <i className="icon-arrow-right font-size-10"></i>
+                  <i className="icon-action-redo font-size-10"></i>
                 </div>
               </a>
             </div>
