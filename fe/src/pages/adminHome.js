@@ -1,53 +1,47 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import AdminHeader from "../components/AdminHeader";
 import AdminSideNav from "../components/AdminSideNav";
-import { Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import "../assets/css/adminCss/AdminHome.css";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Pie } from "react-chartjs-2";
 
-// Đăng ký các phần tử cần thiết cho chart.js
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
+// Đăng ký các thành phần của Chart.js
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const AdminHome = () => {
-  // Dữ liệu cho các biểu đồ
-  const revenueChartData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May"],
-    datasets: [
-      {
-        label: "Doanh thu",
-        data: [65, 59, 80, 81, 56],
-        borderColor: "rgba(75,192,192,1)",
-        fill: false,
-      },
-    ],
-  };
-
   const customersChartData = {
     labels: ["Mới", "Trở Lại", "Khác"],
     datasets: [
       {
-        label: "Truy Cập",
         data: [350, 450, 100],
-        backgroundColor: ["green", "gray", "yellow"],
+        backgroundColor: ["#00C9A7", "#886CFF", "#FFC107"],
       },
     ],
   };
+  const chartOptions = {
+    plugins: {
+      tooltip: {
+        enabled: true, // Bật tooltip khi hover
+      },
+      legend: {
+        display: false, // Tắt chú thích nếu không cần
+      },
+    },
+  };
+
+  const [percentage, setPercentage] = useState(0); // Tạo state để lưu phần trăm
+
+  useEffect(() => {
+    const actualValue = 4.9;
+    const maxValue = 5;
+
+    // Tính phần trăm
+    const calculatedPercentage = (actualValue / maxValue) * 100;
+
+    // Cập nhật state
+    setPercentage(calculatedPercentage);
+  }, []);
+
   return (
     <div>
       <AdminHeader />
@@ -76,7 +70,7 @@ const AdminHome = () => {
                 <div className="card-body">
                   <div className="media align-items-center">
                     <div className="avatar avatar-icon avatar-lg avatar-purple">
-                      <i className="anticon anticon-user"></i>
+                      <i className="icon-people"></i>
                     </div>
                     <div className="m-l-15">
                       <h2 className="m-b-0">1,832</h2>
@@ -121,9 +115,7 @@ const AdminHome = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="m-t-50" style={{ height: "330px" }}>
-                    <Line data={revenueChartData} />
-                  </div>
+                  <div className="m-t-50" style={{ height: "330px" }}></div>
                 </div>
               </div>
             </div>
@@ -135,7 +127,7 @@ const AdminHome = () => {
                     className="m-v-60 text-center chart-container"
                     style={{ height: "200px" }}
                   >
-                    <Line data={customersChartData} />
+                    <Pie data={customersChartData} options={chartOptions} />
                   </div>
                   <div className="row border-top p-t-25">
                     <div className="col-4">
@@ -262,10 +254,13 @@ const AdminHome = () => {
                                 <div className="progress progress-sm w-100 m-b-0">
                                   <div
                                     className="progress-bar bg-success"
-                                    id="progress-bar"
+                                    style={{ width: `${percentage}%` }} // Gán chiều rộng dựa trên state
                                   ></div>
                                 </div>
-                                <div className="m-l-10">81%</div>
+                                <div className="m-l-10">
+                                  {percentage.toFixed(1)}%
+                                </div>{" "}
+                                {/* Hiển thị phần trăm */}
                               </div>
                             </td>
                           </tr>

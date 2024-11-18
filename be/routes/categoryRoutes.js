@@ -1,8 +1,8 @@
 // routes/categories.js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Category = require('../models/Category');
-const Account = require('../models/Account');
+const Category = require("../models/Category");
+const Account = require("../models/Account");
 
 // Helper function to check if Account exists
 const checkAccountExists = async (accountId) => {
@@ -10,14 +10,22 @@ const checkAccountExists = async (accountId) => {
 };
 
 // Create a new category
-router.post('/', async (req, res) => {
+router.post("/", async (req, res) => {
   try {
-    const account = await checkAccountExists(req.body.Account_ID_FK);
+    // Kiểm tra tài khoản dựa trên _id của Account
+    const account = await checkAccountExists(req.body.CreatedBy);
     if (!account) {
-      return res.status(404).json({ message: 'Account not found. Category cannot be created.' });
+      return res
+        .status(404)
+        .json({ message: "Account not found. Category cannot be created." });
     }
 
-    const newCategory = new Category(req.body);
+    // Tạo danh mục mới, sử dụng _id của Account làm CreatedBy
+    const newCategory = new Category({
+      ...req.body,
+      CreatedBy: account._id, // Gán _id của Account vào trường CreatedBy
+    });
+
     const category = await newCategory.save();
     res.status(201).json(category);
   } catch (error) {
@@ -26,7 +34,7 @@ router.post('/', async (req, res) => {
 });
 
 // Get all categories
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const categories = await Category.find();
     res.json(categories);
@@ -36,14 +44,18 @@ router.get('/', async (req, res) => {
 });
 
 // Get a category by ID
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
-    if (!category) return res.status(404).json({ message: 'Category not found' });
+    if (!category)
+      return res.status(404).json({ message: "Category not found" });
 
-    const account = await checkAccountExists(category.Account_ID_FK);
+    // Kiểm tra tài khoản liên kết với danh mục
+    const account = await checkAccountExists(category.CreatedBy);
     if (!account) {
-      return res.status(404).json({ message: 'Account associated with this category not found.' });
+      return res
+        .status(404)
+        .json({ message: "Account associated with this category not found." });
     }
 
     res.json(category);
@@ -53,15 +65,22 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update a category
-router.put('/:id', async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
-    const account = await checkAccountExists(req.body.Account_ID_FK);
+    // Kiểm tra tài khoản dựa trên _id của Account
+    const account = await checkAccountExists(req.body.CreatedBy);
     if (!account) {
-      return res.status(404).json({ message: 'Account not found. Category cannot be updated.' });
+      return res
+        .status(404)
+        .json({ message: "Account not found. Category cannot be updated." });
     }
 
-    const category = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!category) return res.status(404).json({ message: 'Category not found' });
+    // Cập nhật danh mục
+    const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!category)
+      return res.status(404).json({ message: "Category not found" });
     res.json(category);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -69,19 +88,26 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete a category
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const category = await Category.findById(req.params.id);
-    if (!category) return res.status(404).json({ message: 'Category not found' });
+    if (!category)
+      return res.status(404).json({ message: "Category not found" });
 
-    // Check if the account associated with this category exists
-    const account = await checkAccountExists(category.Account_ID_FK);
+    // Kiểm tra tài khoản liên kết với danh mục
+    const account = await checkAccountExists(category.CreatedBy);
     if (!account) {
-      return res.status(404).json({ message: 'Account associated with this category not found. Category cannot be deleted.' });
+      return res
+        .status(404)
+        .json({
+          message:
+            "Account associated with this category not found. Category cannot be deleted.",
+        });
     }
 
+    // Xóa danh mục
     await category.deleteOne();
-    res.json({ message: 'Category deleted successfully' });
+    res.json({ message: "Category deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
