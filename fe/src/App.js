@@ -20,12 +20,12 @@ function App() {
   return (
     <div>
       {!isAdminPage && <Header />} {/* Hiển thị Header */}
-      <Home />
-      {!isAdminPage && <Footer />}
+      {!isAdminPage && <Home />} {/* Hiển thị Header */}
       <Routes>
         {/* Định nghĩa route cho trang AdminHome */}
         <Route path="/admin-home" element={<AdminHome key="admin-home" />} />
       </Routes>
+      {!isAdminPage && <Footer />}
     </div>
   );
 }

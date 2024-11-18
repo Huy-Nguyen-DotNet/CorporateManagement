@@ -11,3 +11,13 @@
 .dropdown-menu.show {
   display: block; /* Hiển thị dropdown khi có lớp 'show' */
 }
+
+/* Căn giữa toàn bộ phần tử canvas */
+.chart-container,
+.center {
+  display: flex; /* Sử dụng Flexbox */
+  justify-content: center; /* Căn giữa theo chiều ngang */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  height: 100%; /* Đảm bảo chiều cao của container là 100% */
+  width: 100%; /* Đảm bảo chiều rộng của container là 100% */
+}
