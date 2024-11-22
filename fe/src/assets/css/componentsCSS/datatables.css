@@ -1,0 +1,46 @@
+/* Đặt màu nền cho các hàng chẵn */
+#data-table_wrapper tbody tr:nth-child(even) {
+  background-color: #eeeeee; /* Màu nền xám nhạt cho các hàng chẵn */
+}
+
+/* Đặt màu nền cho hàng khi hover */
+#data-table_wrapper tbody tr:hover {
+  background-color: #ffdca2; /* Màu nền xanh dương nhạt khi di chuột qua hàng */
+}
+
+/* Tăng kích thước chữ cho toàn bộ DataTable */
+#data-table_wrapper {
+  font-size: 17px; /* Chỉnh kích thước theo mong muốn, ví dụ 16px */
+}
+
+/* Tăng kích thước chữ cho tiêu đề bảng */
+#data-table_wrapper .dataTables_length,
+#data-table_wrapper .dataTables_filter,
+#data-table_wrapper .dataTables_info,
+#data-table_wrapper .dataTables_paginate,
+form {
+  font-size: 16px; /* Chỉnh kích thước cho các phần phân trang, tìm kiếm, v.v. */
+}
+
+/* Tăng kích thước chữ cho tiêu đề cột */
+#data-table_wrapper th {
+  font-size: 17px;
+}
+
+/* Tăng chiều cao cho cả tiêu đề và dòng dữ liệu */
+#data-table_wrapper th,
+#data-table_wrapper td {
+  padding: 15px 10px; /* Tăng padding để tạo chiều cao mong muốn */
+  line-height: 1.3; /* Điều chỉnh thêm line-height nếu cần */
+  /* Dòng dữ liệu */
+  text-align: left;
+}
+/* Đặt màu nền cho các hàng trong bảng */
+#data-table_wrapper .dt-scroll .dt-scroll-head .dt-scroll-headInner {
+  background-color: #ffdca2; /* Màu nền cho header */
+  border-radius: 10px 10px 0 0;
+}
+
+#data-table_wrapper .dt-scroll .dt-scroll-body {
+  height: 650px;
+}
