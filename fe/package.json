@@ -12,6 +12,7 @@
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "chart.js": "^4.4.6",
+<<<<<<< HEAD
     "datatables.net": "^2.1.8",
     "datatables.net-bs5": "^2.1.8",
     "datatables.net-dt": "^2.1.8",
@@ -19,6 +20,11 @@
     "font-awesome": "^4.7.0",
     "formik": "^2.4.6",
     "jquery": "^3.7.1",
+=======
+    "date-fns": "^4.1.0",
+    "font-awesome": "^4.7.0",
+    "formik": "^2.4.6",
+>>>>>>> 6625084670e49f2dc1eba28df1bb927b399aa9fc
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
     "react-chartjs-2": "^5.2.0",
