@@ -1,10 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../assets/images/logo-fold.png";
 import "../assets/css/componentsCSS/header.css";
 import { Link } from "react-router-dom";
-import AdminHome from "../pages/adminHome";
 
 const Header = () => {
+  const [categories, setCategories] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(""); // State để lưu giá trị tìm kiếm
+
+  // Fetch danh mục từ API khi component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/categories");
+        const data = await response.json();
+        setCategories(data); // Lưu trữ danh mục vào state
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Hàm xử lý thay đổi input tìm kiếm
+  const handleSearchChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Hàm xử lý submit tìm kiếm
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    if (searchQuery.trim()) {
+      // Bạn có thể thay đổi URL hoặc thực hiện tìm kiếm ở đây
+      window.location.href = `/search/${searchQuery}`; // Điều hướng tới trang tìm kiếm
+    }
+  };
+
   return (
     <header className="header-default">
       <nav className="navbar navbar-expand-lg">
@@ -18,123 +49,52 @@ const Header = () => {
             {/* menus */}
             <ul className="navbar-nav mr-auto">
               <li className="nav-item active">
-                <a className="nav-link" href="category.html">
+                <a className="nav-link font-weight-bold" href="/home">
                   Trang Chủ
                 </a>
               </li>
-              <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#">
+              <li className="nav-item dropdown m-l-35">
+                <a className="nav-link dropdown-toggle font-weight-bold">
                   Danh Mục Tin Tức
                 </a>
                 <ul className="dropdown-menu multi-column">
-                  <li>
-                    <a className="dropdown-item" href="politics.html">
-                      Chính Trị
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="business.html">
-                      Kinh Doanh
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="technology.html">
-                      Công Nghệ
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="sports.html">
-                      Thể Thao
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="health.html">
-                      Sức Khỏe
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="education.html">
-                      Giáo Dục
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="entertainment.html">
-                      Giải Trí
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="travel.html">
-                      Du Lịch
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="science.html">
-                      Khoa Học
-                    </a>
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="lifestyle.html">
-                      Đời Sống
-                    </a>
-                  </li>
+                  {categories.map((category) => (
+                    <li key={category._id}>
+                      <a
+                        className="dropdown-item"
+                        href={`/category/${category._id}`}
+                      >
+                        {category.Name}
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               </li>
-              <li className="nav-item">
-                <a className="nav-link" href="contact.html">
-                  Liên Hệ
-                </a>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/admin-home">
+
+              <li className="nav-item m-l-35">
+                <a className="nav-link font-weight-bold" href="/admin-home">
                   Quản Trị Viên
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
 
           {/* header right section */}
-          <div className="header-right">
-            {/* social icons */}
-            <ul className="social-icons list-unstyled list-inline mb-0">
-              <li className="list-inline-item">
-                <a href="#">
-                  <i className="fab fa-facebook-f"></i>
-                </a>
-              </li>
-              <li className="list-inline-item">
-                <a href="#">
-                  <i className="fab fa-twitter"></i>
-                </a>
-              </li>
-              <li className="list-inline-item">
-                <a href="#">
-                  <i className="fab fa-instagram"></i>
-                </a>
-              </li>
-              <li className="list-inline-item">
-                <a href="#">
-                  <i className="fab fa-pinterest"></i>
-                </a>
-              </li>
-              <li className="list-inline-item">
-                <a href="#">
-                  <i className="fab fa-medium"></i>
-                </a>
-              </li>
-              <li className="list-inline-item">
-                <a href="#">
-                  <i className="fab fa-youtube"></i>
-                </a>
-              </li>
-            </ul>
+          <div className="header-right m-t">
             {/* header buttons */}
             <div className="header-buttons">
-              <button className="search icon-button">
-                <i className="icon-magnifier"></i>
-              </button>
-              <button className="burger-menu icon-button">
-                <span className="burger-icon"></span>
-              </button>
+              <form onSubmit={handleSearchSubmit}>
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Tìm kiếm..."
+                  value={searchQuery}
+                  onChange={handleSearchChange} // Cập nhật giá trị tìm kiếm
+                />
+                <button type="submit" className="search icon-button">
+                  <i className="icon-magnifier"></i>
+                </button>
+              </form>
             </div>
           </div>
         </div>

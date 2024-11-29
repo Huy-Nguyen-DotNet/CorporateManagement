@@ -10,7 +10,7 @@ import "./assets/css/style.css";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom"; // Import BrowserRoute
 import { BrowserRouter as Router } from "react-router-dom"; // Import Router
-
+localStorage.removeItem("token");
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <BrowserRouter>

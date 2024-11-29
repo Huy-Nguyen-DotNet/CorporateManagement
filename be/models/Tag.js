@@ -7,8 +7,7 @@ const tagSchema = new mongoose.Schema(
     MetaTitle: { type: String, maxlength: 250 },
     MetaKeyword: { type: String, maxlength: 250 },
     MetaDescription: { type: String, maxlength: 250 },
-    CreatedBy: { type: String, maxlength: 100 },
-    ModifiedBy: { type: String, maxlength: 100 },
+    CreatedBy: { type: String, maxlength: 100, require: true },
     Status: { type: Boolean, required: true },
   },
   { timestamps: true } // Tự động thêm createdAt và updatedAt

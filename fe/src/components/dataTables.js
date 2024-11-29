@@ -4,7 +4,7 @@ import "datatables.net-bs5";
 import "datatables.net-bs5/css/dataTables.bootstrap5.min.css";
 import "../assets/css/componentsCSS/datatables.css";
 
-const DataTable = ({ data, columns }) => {
+const DataTable = React.memo(({ columns, data, onRowDoubleClick }) => {
   useEffect(() => {
     if (data.length === 0) return; // Chờ cho đến khi có dữ liệu
 
@@ -33,12 +33,32 @@ const DataTable = ({ data, columns }) => {
           sLast: "Cuối",
         },
       },
+      data: data, // Truyền dữ liệu vào DataTable
+      columns: columns.map((col) => ({
+        data: col.key, // Lấy trường dữ liệu từ `data` theo `key` của cột
+        title: col.label,
+      })),
+    });
+
+    // Cập nhật bảng khi dữ liệu thay đổi
+    if (data.length > 0) {
+      table.clear().rows.add(data).draw();
+    }
+
+    // Gắn sự kiện nhấn đúp chuột
+    $("#data-table tbody").on("dblclick", "tr", function () {
+      const rowIndex = table.row(this).index(); // Lấy chỉ số của hàng
+      const rowData = data[rowIndex]; // Lấy toàn bộ dữ liệu từ mảng `data`
+      if (onRowDoubleClick) {
+        onRowDoubleClick(rowData); // Gọi callback với toàn bộ dữ liệu
+      }
     });
 
     return () => {
-      table.destroy(true);
+      table.destroy(true); // Huỷ bảng khi component bị hủy
+      $("#data-table tbody").off("dblclick", "tr"); // Gỡ bỏ sự kiện
     };
-  }, [data]);
+  }, [data, columns, onRowDoubleClick]);
 
   return (
     <table id="data-table" className="display" style={{ width: "100%" }}>
@@ -60,6 +80,6 @@ const DataTable = ({ data, columns }) => {
       </tbody>
     </table>
   );
-};
+});
 
 export default DataTable;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminHeader from "../components/AdminHeader";
 import AdminSideNav from "../components/AdminSideNav";
 import "../assets/css/adminCss/AdminHome.css";
@@ -41,6 +42,16 @@ const AdminHome = () => {
     // Cập nhật state
     setPercentage(calculatedPercentage);
   }, []);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      // Chuyển hướng đến trang đăng nhập nếu không có token
+      navigate("/admin-login");
+    }
+  }, [navigate]);
 
   return (
     <div>

@@ -1,0 +1,6 @@
+.popular-news {
+  width: 60px; /* Ảnh chiếm toàn bộ chiều rộng của khung chứa */
+  height: 60px; /* Đặt chiều cao cố định cho ảnh */
+  object-fit: cover; /* Giữ tỷ lệ ảnh và cắt bớt phần không cần thiết để vừa với khung */
+  border-radius: 8px; /* Thêm bo góc cho ảnh */
+}

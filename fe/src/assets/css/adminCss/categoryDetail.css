@@ -1,0 +1,38 @@
+.card {
+  border-radius: 12px;
+}
+
+.card-header {
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.form-control-plaintext {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px 15px;
+}
+
+button {
+  font-size: 16px;
+  font-weight: bold;
+}
+.category-detail-form {
+  font-size: 16px; /* Tăng kích thước chữ */
+  font-weight: 500; /* Đậm vừa phải */
+  line-height: 1.5; /* Tăng khoảng cách giữa các dòng */
+}
+.category-detail-form .form-label {
+  font-size: 17px;
+  font-weight: bold; /* Đậm hơn cho nhãn */
+}
+/* Tạo khoảng cách giữa label và công tắc */
+.form-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Khoảng cách giữa label và switch */
+}
+
+.form-switch .form-check-label {
+  margin-left: 10px; /* Khoảng cách cụ thể giữa label và công tắc */
+}

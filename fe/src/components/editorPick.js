@@ -1,131 +1,117 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 
-const posts = [
-  {
-    category: 'Lifestyle',
-    image: 'images/posts/t1-faker-1.jpg',
-    authorImage: 'images/other/mHuy.jpg',
-    author: 'mHuy Doe',
-    date: '29 March 2021',
-    title: 'Vô địch CKTG, Faker bước vào ngôi đền của các huyền thoại',
-    excerpt: 'A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy',
-    link: 'blog-single.html',
-  },
-  {
-    category: '',
-    image: 'images/posts/t1-cup-2.jpg',
-    authorImage: '',
-    author: '',
-    date: '29 March 2021',
-    title: 'T1 vô địch CKTG 2024, Faker lần thứ 5 trên đỉnh thế giới',
-    excerpt: '',
-    link: 'blog-single.html',
-  },
-  {
-    category: '',
-    image: 'images/posts/t1-cup.jpg',
-    authorImage: '',
-    author: '',
-    date: '29 March 2021',
-    title: 'Chùm ảnh: T1 vô địch CKTG 2024, Faker lần thứ 5 trên đỉnh thế giới',
-    excerpt: '',
-    link: 'blog-single.html',
-  },
-  {
-    category: '',
-    image: 'images/posts/t1-full-2.jpg',
-    authorImage: '',
-    author: '',
-    date: '29 March 2021',
-    title: 'T1 Lên Ngôi Vô Địch CKTG 2024: Một Chương Mới Trong Lịch Sử LMHT',
-    excerpt: '',
-    link: 'blog-single.html',
-  },
-  {
-    category: '',
-    image: 'images/posts/t1-faker-1.jpg',
-    authorImage: '',
-    author: '',
-    date: '29 March 2021',
-    title: 'Vô địch CKTG, Faker bước vào ngôi đền của các huyền thoại',
-    excerpt: '',
-    link: 'blog-single.html',
-  },
-];
+const FeaturedNews = () => {
+  const [news, setNews] = useState([]);
 
-const EditorPick = () => {
+  // Hàm fetch API
+  const fetchFeaturedNews = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/news/featured-news"
+      ); // URL API
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setNews(data); // Cập nhật state với danh sách bài viết
+    } catch (error) {
+      console.error("Error fetching featured news:", error);
+    }
+  };
+
+  // Gọi fetch API khi component render lần đầu
+  useEffect(() => {
+    fetchFeaturedNews();
+  }, []);
+
   return (
-    <div>
-      <div className="section-header">
-        <h3 className="section-title">Editor’s Pick</h3>
-        <img src="images/wave.svg" className="wave" alt="wave" />
-      </div>
+    <div className="section-header">
+      <h3 className="section-title">Editor’s Pick</h3>
+      <img src="images/wave.svg" className="wave" alt="wave" />
 
       <div className="padding-30 rounded bordered">
         <div className="row gy-5">
-          <div className="col-sm-6">
-            {posts.slice(0, 1).map((post, index) => (
-              <div key={index} className="post">
-                <div className="thumb rounded">
-                  {post.category && (
-                    <a href="category.html" className="category-badge position-absolute">
-                      {post.category}
+          {news.length > 0 && (
+            <>
+              {/* Bài viết đầu tiên */}
+              <div className="col-sm-6">
+                <div className="post">
+                  <div className="thumb rounded">
+                    <a
+                      href="category.html"
+                      className="category-badge position-absolute"
+                    >
+                      {news[0].category || "Unknown Category"}
                     </a>
-                  )}
-                  <span className="post-format">
-                    <i className="icon-picture"></i>
-                  </span>
-                  <a href={post.link}>
-                    <div className="inner">
-                      <img src={post.image} alt="post-title" />
-                    </div>
-                  </a>
-                </div>
-                <ul className="meta list-inline mt-4 mb-0">
-                  {post.authorImage && (
+                    <span className="post-format">
+                      <i className="icon-picture"></i>
+                    </span>
+                    <a href={`blog/${news[0]._id}`}>
+                      <div className="inner">
+                        <img
+                          src={news[0].Images[0] || "images/default.jpg"}
+                          alt={news[0].Title}
+                        />
+                      </div>
+                    </a>
+                  </div>
+                  <ul className="meta list-inline mt-4 mb-0">
                     <li className="list-inline-item">
                       <a href="#">
-                        <img src={post.authorImage} className="author" alt="author" />
-                        {post.author}
+                        <img
+                          src="images/other/author-sm.png"
+                          className="author"
+                          alt="author"
+                        />
+                        {news[0].CreatedBy || "Admin"}
                       </a>
                     </li>
-                  )}
-                  <li className="list-inline-item">{post.date}</li>
-                </ul>
-                <h5 className="post-title mb-3 mt-3">
-                  <a href={post.link}>{post.title}</a>
-                </h5>
-                <p className="excerpt mb-0">{post.excerpt}</p>
-              </div>
-            ))}
-          </div>
-          <div className="col-sm-6">
-            {posts.slice(1).map((post, index) => (
-              <div key={index} className="post post-list-sm square">
-                <div className="thumb rounded">
-                  <a href={post.link}>
-                    <div className="inner">
-                      <img src={post.image} alt="post-title" />
-                    </div>
-                  </a>
-                </div>
-                <div className="details clearfix">
-                  <h6 className="post-title my-0">
-                    <a href={post.link}>{post.title}</a>
-                  </h6>
-                  <ul className="meta list-inline mt-1 mb-0">
-                    <li className="list-inline-item">{post.date}</li>
+                    <li className="list-inline-item">
+                      {new Date(news[0].createdAt).toLocaleDateString()}
+                    </li>
                   </ul>
+                  <h5 className="post-title mb-3 mt-3">
+                    <a href={`blog/${news[0]._id}`}>{news[0].Title}</a>
+                  </h5>
+                  <p className="excerpt mb-0">
+                    {news[0].MetaDescription || ""}
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
+
+              {/* Các bài viết còn lại */}
+              <div className="col-sm-6">
+                {news.slice(1).map((item) => (
+                  <div key={item._id} className="post post-list-sm square">
+                    <div className="thumb rounded">
+                      <a href={`blog/${item._id}`}>
+                        <div className="inner">
+                          <img
+                            src={item.Images[0] || "images/default.jpg"}
+                            alt={item.Title}
+                          />
+                        </div>
+                      </a>
+                    </div>
+                    <div className="details clearfix">
+                      <h6 className="post-title my-0">
+                        <a href={`blog/${item._id}`}>{item.Title}</a>
+                      </h6>
+                      <ul className="meta list-inline mt-1 mb-0">
+                        <li className="list-inline-item">
+                          {new Date(item.createdAt).toLocaleDateString()}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
-
-      <div className="spacer" data-height="50"></div>
     </div>
   );
 };
 
-export default EditorPick;
+export default FeaturedNews;

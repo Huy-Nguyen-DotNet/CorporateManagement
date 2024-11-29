@@ -2,193 +2,291 @@ import React, { useState, useEffect } from "react";
 import DataTable from "../../components/dataTables.js";
 import AdminHeader from "../../components/AdminHeader.js";
 import AdminSideNav from "../../components/AdminSideNav.js";
+import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import { Button, Modal, Form } from "react-bootstrap";
+import "react-toastify/dist/ReactToastify.min.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Breadcrumb from "../../components/Breadcrumb";
+import { jwtDecode } from "jwt-decode";
 
-const Catagory = () => {
-  const [categories, setCategories] = useState([]); // State để lưu danh sách danh mục
-  const [loading, setLoading] = useState(true); // State để theo dõi trạng thái tải dữ liệu
+const Category = () => {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false); // State cho modal
+  const [newCategory, setNewCategory] = useState({
+    Name: "",
+    Status: true,
+    Summary: "",
+    Url: "",
+    MetaTitle: "",
+    MetaKeyword: "",
+    MetaDescription: "",
+  });
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const level = [
+    { name: "Trang Chủ", link: "/admin-home" },
+    { name: "Quản Lý Danh Mục", link: "" },
+  ];
 
   const columns = [
     { key: "name", label: "Tên Danh mục" },
     { key: "status", label: "Trạng thái" },
     { key: "createdAt", label: "Ngày Tạo" },
+    { key: "updatedAt", label: "Ngày Sửa Đổi" },
     { key: "createdBy", label: "Người Tạo" },
   ];
 
   useEffect(() => {
-    // Sử dụng fetch để gọi API lấy danh sách danh mục từ backend
-    fetch("http://localhost:5000/api/categories") // URL API backend
-      .then((response) => response.json()) // Chuyển dữ liệu thành JSON
+    if (location.state && location.state.message) {
+      toast.success(location.state.message, {
+        autoClose: 10000,
+      });
+    }
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = () => {
+    fetch("http://localhost:5000/api/categories")
+      .then((response) => response.json())
       .then((data) => {
-        // Xử lý mỗi danh mục và lấy thông tin người tạo (CreatedBy) từ _id
         Promise.all(
           data.map((category) => {
             return fetch(
               `http://localhost:5000/api/accounts/${category.CreatedBy}`
-            ) // Gọi API để lấy thông tin người tạo
+            )
               .then((response) => response.json())
               .then((accountData) => {
-                // Cập nhật với tên người tạo
-                category.createdBy = accountData.Username; // Giả sử API trả về 'name' của người tạo
-                return category; // Trả lại category đã được cập nhật
+                category.createdBy =
+                  accountData.FirstName + " " + accountData.LastName;
+                return category;
               });
           })
-        )
-          .then((updatedCategories) => {
-            // Cập nhật danh sách danh mục với thông tin người tạo đã được lấy
-            const transformedData = updatedCategories.map((category) => ({
-              name: category.Name,
-              status: category.Status ? "Hoạt động" : "Không hoạt động",
-              createdAt: new Date(category.createdAt).toLocaleDateString(
-                "vi-VN"
-              ),
-              createdBy: category.createdBy, // Hiển thị tên người tạo
-            }));
-            setCategories(transformedData); // Cập nhật state với dữ liệu đã xử lý
-            setLoading(false); // Đổi trạng thái loading khi dữ liệu đã được tải xong
-          })
-          .catch((error) => {
-            console.error(
-              "Có lỗi khi lấy dữ liệu danh mục hoặc thông tin người tạo:",
-              error
-            );
-            setLoading(false); // Đổi trạng thái loading khi có lỗi
-          });
+        ).then((updatedCategories) => {
+          const transformedData = updatedCategories.map((category) => ({
+            id: category._id,
+            name: category.Name,
+            status: category.Status ? "Hoạt động" : "Không hoạt động",
+            createdAt: new Date(category.createdAt).toLocaleDateString("vi-VN"),
+            updatedAt: new Date(category.updatedAt).toLocaleDateString("vi-VN"),
+            createdBy: category.createdBy,
+            url: category.Url,
+            summary: category.Summary,
+            position: category.Position,
+            metaTitle: category.MetaTitle,
+            metaKeyword: category.MetaKeyword,
+            metaDescription: category.MetaDescription,
+          }));
+          setCategories(transformedData);
+          setLoading(false);
+        });
       })
       .catch((error) => {
-        console.error("Có lỗi khi lấy dữ liệu danh mục:", error);
-        setLoading(false); // Đổi trạng thái loading khi có lỗi
+        console.error("Lỗi khi lấy danh mục:", error);
+        setLoading(false);
       });
-  }, []); // Chạy 1 lần khi component được render lần đầu
+  };
+
+  const handleRowDoubleClick = (rowData) => {
+    navigate(`/admin-category/${rowData.id}`);
+  };
+
+  const handleCloseModal = () => {
+    // Đóng modal
+    setShowModal(false);
+
+    // Reload lại trang
+    window.location.reload();
+  };
+  const handleShowModal = () => setShowModal(true); // Mở modal
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewCategory({
+      ...newCategory,
+      [name]: value,
+    });
+  };
+
+  const handleSubmitCategory = async () => {
+    let token = localStorage.getItem("token"); // Lấy Access Token từ localStorage
+
+    const isTokenExpired = (token) => {
+      if (!token) return true; // Nếu không có token, coi như đã hết hạn
+    };
+
+    // Kiểm tra token có hết hạn không
+    if (isTokenExpired(token)) {
+      // Nếu hết hạn, gọi API refresh để lấy token mới
+      const refreshResponse = await fetch("http://localhost:5000/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          refreshToken: localStorage.getItem("refreshToken"),
+        }),
+      });
+
+      if (refreshResponse.ok) {
+        const data = await refreshResponse.json();
+        token = data.accessToken; // Cập nhật Access Token mới
+        localStorage.setItem("token", token); // Lưu lại Access Token
+      } else {
+        toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+        return; // Dừng việc xử lý
+      }
+    }
+
+    // Tiếp tục gửi yêu cầu thêm danh mục
+    fetch("http://localhost:5000/api/categories", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(newCategory),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data._id) {
+          toast.success("Thêm danh mục thành công");
+          setShowModal(false);
+        } else {
+          toast.error("Lỗi khi thêm danh mục");
+        }
+      })
+      .catch((error) => {
+        toast.error("Có lỗi xảy ra: " + error.message);
+      });
+  };
 
   if (loading) {
-    return <div>Đang tải dữ liệu...</div>; // Hiển thị thông báo khi dữ liệu đang tải
+    return (
+      <div>
+        <AdminHeader />
+        <div>Đang tải dữ liệu...</div>
+        <AdminSideNav />
+      </div>
+    );
   }
 
   return (
     <div>
       <AdminHeader />
       <div className="page-container">
-        {/* Content Wrapper START */}
         <div className="main-content">
-          <div className="row">
-            <div className="col-md-6">
+          <div className="tab-content m-t-15">
+            <div className="tab-pane fade show active" id="tab-account">
+              <Breadcrumb categories={level} />
               <h2>Quản Lý Danh Mục</h2>
-            </div>
-            <div className="col-md-6 d-flex align-items-center justify-content-end ">
-              <button
-                className="btn btn-primary m-r-5 background-color-blue float-right"
-                style={{ color: "black" }}
-                id="createCustomer"
+              <Button
+                variant="primary"
+                onClick={handleShowModal}
+                className="float-right"
               >
-                Thêm Mới Danh Mục
-              </button>
-              <button className="btn btn-danger m-r-5 float-right">
-                Xóa Danh Mục
-              </button>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md-8">
-              <DataTable columns={columns} data={categories} />
-            </div>
-            <div className="col-md-4 m-t-70">
-              <form>
-                <div className="form-group">
-                  <label>ID Danh Mục</label>
-                  <input type="text" className="form-control" name="id" />
-                </div>
-                <div className="form-group">
-                  <label>Tên Danh Mục</label>
-                  <input type="text" className="form-control" name="name" />
-                </div>
-                <div className="form-group">
-                  <label>Mô Tả</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="description"
-                  />
-                </div>
-                <div className="form-row">
-                  <div className="form-group col-md-6">
-                    <label>Ngày Tạo</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="createdDate"
-                    />
-                  </div>
-                  <div className="form-group col-md-6">
-                    <label>Người Tạo</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="createdBy"
-                    />
-                  </div>
-                </div>
-                <div className="form-row">
-                  <div className="form-group col-md-6">
-                    <label>Ngày Chỉnh Sửa</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="modifiedDate"
-                    />
-                  </div>
-                  <div className="form-group col-md-6">
-                    <label>Người Chỉnh sửa</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      name="modifiedBy"
-                    />
-                  </div>
-                </div>
-                <fieldset className="form-group">
-                  <div className="row">
-                    <label className="col-form-label col-sm-4 pt-0">
-                      Trạng thái
-                    </label>
-                    <div className="col-sm-8">
-                      <div className="radio">
-                        <input
-                          type="radio"
-                          name="status"
-                          id="gridRadios1"
-                          value="active"
-                        />
-                        <label htmlFor="gridRadios1">Hoạt động</label>
-                      </div>
-                      <div className="radio">
-                        <input
-                          type="radio"
-                          name="status"
-                          id="gridRadios2"
-                          value="inactive"
-                        />
-                        <label htmlFor="gridRadios2">Không hoạt động</label>
-                      </div>
-                      <div className="radio">
-                        <input
-                          type="radio"
-                          name="status"
-                          id="gridRadios3"
-                          value="hidden"
-                        />
-                        <label htmlFor="gridRadios3">Ẩn</label>
-                      </div>
-                    </div>
-                  </div>
-                </fieldset>
-              </form>
+                Thêm Danh Mục
+              </Button>
+              <DataTable
+                key="categoryTable"
+                columns={columns}
+                data={categories}
+                onRowDoubleClick={handleRowDoubleClick}
+              />
             </div>
           </div>
         </div>
       </div>
       <AdminSideNav />
+      {/* Modal Thêm Danh Mục */}
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Thêm Danh Mục</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="formCategoryName">
+              <Form.Label>Tên Danh Mục</Form.Label>
+              <Form.Control
+                type="text"
+                name="Name"
+                value={newCategory.Name}
+                onChange={handleInputChange}
+                placeholder="Nhập tên danh mục"
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formCategorySummary">
+              <Form.Label>Tóm Tắt</Form.Label>
+              <Form.Control
+                type="text"
+                name="Summary"
+                value={newCategory.Summary}
+                onChange={handleInputChange}
+                placeholder="Nhập tóm tắt"
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formCategoryMetaTitle">
+              <Form.Label>URL</Form.Label>
+              <Form.Control
+                type="text"
+                name="Url"
+                value={newCategory.Url}
+                onChange={handleInputChange}
+                placeholder="Nhập Meta Title"
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formCategoryMetaTitle">
+              <Form.Label>Meta Title</Form.Label>
+              <Form.Control
+                type="text"
+                name="MetaTitle"
+                value={newCategory.MetaTitle}
+                onChange={handleInputChange}
+                placeholder="Nhập Meta Title"
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formCategoryMetaKeyword">
+              <Form.Label>Meta Keyword</Form.Label>
+              <Form.Control
+                type="text"
+                name="MetaKeyword"
+                value={newCategory.MetaKeyword}
+                onChange={handleInputChange}
+                placeholder="Nhập Meta Keyword"
+              />
+            </Form.Group>
+
+            <Form.Group controlId="formCategoryMetaDescription">
+              <Form.Label>Meta Description</Form.Label>
+              <Form.Control
+                type="text"
+                name="MetaDescription"
+                value={newCategory.MetaDescription}
+                onChange={handleInputChange}
+                placeholder="Nhập Meta Description"
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Đóng
+          </Button>
+          <Button variant="primary" onClick={handleSubmitCategory}>
+            Thêm Danh Mục
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <ToastContainer />
     </div>
   );
 };
 
-export default Catagory;
+export default Category;
